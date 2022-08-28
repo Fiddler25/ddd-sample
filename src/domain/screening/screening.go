@@ -2,6 +2,7 @@ package screening
 
 import (
 	"ddd-sample/src/domain/interview"
+	"ddd-sample/src/domain/vo"
 	"fmt"
 	"github.com/google/uuid"
 	"time"
@@ -22,7 +23,7 @@ type Screening struct {
 	screeningID           ID                    // 採用選考ID
 	status                status                // 採用選考ステータス
 	applyDate             *time.Time            // 応募日
-	applicantEmailAddress string                // 応募者メールアドレス
+	applicantEmailAddress vo.EmailAddress       // 応募者メールアドレス
 	interviews            []interview.Interview // 面接
 }
 
@@ -31,11 +32,7 @@ func newScreening() *Screening {
 }
 
 // StartFromPreInterview 面談から採用選考を登録する際のファクトリメソッド
-func StartFromPreInterview(applicantEmailAddress string) (*Screening, error) {
-	if isEmpty(applicantEmailAddress) || isInvalidFormatEmailAddress(applicantEmailAddress) {
-		return nil, fmt.Errorf("メールアドレスが正しくありません")
-	}
-
+func StartFromPreInterview(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	s := newScreening()
 
 	s.screeningID = ID(uuid.NewString())
@@ -48,11 +45,7 @@ func StartFromPreInterview(applicantEmailAddress string) (*Screening, error) {
 }
 
 // Apply 面接から採用選考を登録する際のファクトリメソッド
-func Apply(applicantEmailAddress string) (*Screening, error) {
-	if isEmpty(applicantEmailAddress) || isInvalidFormatEmailAddress(applicantEmailAddress) {
-		return nil, fmt.Errorf("メールアドレスが正しくありません")
-	}
-
+func Apply(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	s := newScreening()
 	now := time.Now()
 
@@ -76,17 +69,4 @@ func AddNextInterview(s *Screening, interviewDate time.Time) (*Screening, error)
 	s.interviews = append(s.interviews, nextInterview)
 
 	return s, nil
-}
-
-func isEmpty(val string) bool {
-	return val == ""
-}
-
-func isInvalidFormatEmailAddress(email string) bool {
-	if email == "" {
-		return true
-	}
-
-	// 何らかの処理
-	return false
 }
