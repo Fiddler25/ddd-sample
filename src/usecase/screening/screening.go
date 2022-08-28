@@ -1,79 +1,45 @@
 package screening
 
 import (
-	"ddd-sample/src/domain/interview"
 	"ddd-sample/src/domain/screening"
-	"fmt"
-	"github.com/google/uuid"
 	"time"
 )
 
-// 面談から新規候補者を登録する
-func startFromPreInterview(applicantEmailAddress string) error {
-	if isEmpty(applicantEmailAddress) || isInvalidFormatEmailAddress(applicantEmailAddress) {
-		return fmt.Errorf("メールアドレスが正しくありません")
-	}
-
-	s := new(screening.Screening)
-
-	s.ScreeningID = screening.ID(uuid.NewString())
-	s.Status = screening.NotApplied // 面談からの場合はステータス「未応募」で登録
-	s.ApplyDate = nil               // 未応募なので応募日はnull
-	s.ApplicantEmailAddress = applicantEmailAddress
-
-	// insert
-	return nil
+type ScreeningUseCase struct {
+	screening screening.ScreeningRepository
 }
 
-// 新規応募者を登録する
-func apply(applicantEmailAddress string) error {
-	if isEmpty(applicantEmailAddress) || isInvalidFormatEmailAddress(applicantEmailAddress) {
-		return fmt.Errorf("メールアドレスが正しくありません")
-	}
-
-	s := &screening.Screening{}
-	now := time.Now()
-
-	s.ScreeningID = screening.ID(uuid.NewString())
-	s.Status = screening.Interview // 面接からの場合はステータス「面接」で登録
-	s.ApplyDate = &now             // 応募日は操作日付を使用
-	s.ApplicantEmailAddress = applicantEmailAddress
-
-	// insert
-	return nil
+func NewScreeningUseCase(screening screening.ScreeningRepository) ScreeningUseCase {
+	return ScreeningUseCase{screening: screening}
 }
 
-func isEmpty(val string) bool {
-	return val == ""
-}
-
-func isInvalidFormatEmailAddress(email string) bool {
-	if email == "" {
-		return false
+// StartFromPreInterview 面談から新規候補者を登録する
+func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) error {
+	s, err := screening.StartFromPreInterview(applicantEmailAddress)
+	if err != nil {
+		return err
 	}
 
-	// .....
-	return true
+	return uc.screening.Insert(s)
 }
 
-// 次の面接を設定する
-func addNextInterview(screeningID screening.ID, interviewDate time.Time) error {
-	// 保存されている採用選考オブジェクトを取得したと仮定
-	s := &screening.Screening{}
-
-	if s.Status != screening.Interview {
-		return fmt.Errorf("不正な操作です")
+// Apply 新規応募者を登録する
+func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
+	s, err := screening.Apply(applicantEmailAddress)
+	if err != nil {
+		return err
 	}
 
-	// 保存されている面接オブジェクトの一覧を取得したと仮定
-	var is []interview.Interview
-	i := &interview.Interview{}
+	return uc.screening.Insert(s)
+}
 
-	i.InterviewID = interview.ID(uuid.NewString())
-	i.ScreeningID = screeningID
-	i.InterviewNumber = len(is) + 1 // 面接次数は保存されているインタビューの数+1とする
-	i.ScreeningDate = interviewDate
+// AddNextInterview 次の面接を設定する
+func (uc ScreeningUseCase) AddNextInterview(screeningID screening.ID, interviewDate time.Time) error {
+	s, err := uc.screening.FindByID(screeningID)
+	if err != nil {
+		return err
+	}
+	screening.AddNextInterview(s, interviewDate)
 
-	// insert
-	return nil
+	return uc.screening.Update(s)
 }
