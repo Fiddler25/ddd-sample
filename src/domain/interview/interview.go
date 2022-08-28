@@ -6,19 +6,18 @@ import (
 )
 
 type ID string
-type ScreeningStepResult string
+type screeningStepResult string
 
 const (
-	NotEvaluated ScreeningStepResult = "NOT_EVALUATED" // 未評価
-	Pass         ScreeningStepResult = "PASS"          // 合格
-	Fail         ScreeningStepResult = "FAIL"          // 不合格
+	notEvaluated screeningStepResult = "NOT_EVALUATED" // 未評価
+	pass         screeningStepResult = "PASS"          // 合格
+	fail         screeningStepResult = "FAIL"          // 不合格
 )
 
+// Interview 面接
 type Interview struct {
-	InterviewID         ID                  // 面接ID
-	ScreeningID         screening.ID        // 採用選考ID
-	ScreeningDate       time.Time           // 選考日
-	InterviewNumber     int                 // 面接次数
-	ScreeningStepResult ScreeningStepResult // 面接結果
-	RecruiterID         int                 // 採用担当者ID
+	interviewID         ID                  // 面接ID
+	interviewDate       time.Time           // 選考日
+	interviewNumber     int                 // 面接次数
+	screeningStepResult screeningStepResult // 面接結果
 }
