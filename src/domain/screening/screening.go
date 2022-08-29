@@ -12,11 +12,11 @@ type ID string
 
 // Screening 採用選考
 type Screening struct {
-	screeningID           ID                    // 採用選考ID
-	status                ScreeningStatus       // 採用選考ステータス
-	applyDate             *time.Time            // 応募日
-	applicantEmailAddress vo.EmailAddress       // 応募者メールアドレス
-	interviews            []interview.Interview // 面接
+	screeningID           ID                   // 採用選考ID
+	status                ScreeningStatus      // 採用選考ステータス
+	applyDate             *time.Time           // 応募日
+	applicantEmailAddress vo.EmailAddress      // 応募者メールアドレス
+	interviews            interview.Interviews // 面接
 }
 
 func newScreening() *Screening {
@@ -31,7 +31,7 @@ func StartFromPreInterview(applicantEmailAddress vo.EmailAddress) (*Screening, e
 	s.status = ScreeningStatus{NotApplied} // 面談からの場合はステータス「未応募」で登録
 	s.applyDate = nil                      // 未応募なので応募日はnull
 	s.applicantEmailAddress = applicantEmailAddress
-	s.interviews = []interview.Interview{}
+	s.interviews = interview.NewInterviews()
 
 	return s, nil
 }
@@ -45,7 +45,7 @@ func Apply(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	s.status = ScreeningStatus{Interview} // 面接からの場合はステータス「面接」で登録
 	s.applyDate = &now                    // 応募日は操作日付を使用
 	s.applicantEmailAddress = applicantEmailAddress
-	s.interviews = []interview.Interview{}
+	s.interviews = interview.NewInterviews()
 
 	return s, nil
 }
@@ -56,9 +56,7 @@ func (s *Screening) AddNextInterview(interviewDate time.Time) (*Screening, error
 		return s, fmt.Errorf("不正な操作です")
 	}
 
-	nextInterviewNumber := len(s.interviews) + 1
-	nextInterview := interview.NewInterview(interviewDate, nextInterviewNumber)
-	s.interviews = append(s.interviews, nextInterview)
+	s.interviews.AddNextInterview(interviewDate)
 
 	return s, nil
 }
