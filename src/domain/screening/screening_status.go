@@ -13,7 +13,7 @@ const (
 	DocumentScreening         canAddInterview = false // 書類選考
 	DocumentScreeningRejected canAddInterview = false // 書類不合格
 	DocumentScreeningDeclined canAddInterview = false // 書類選考辞退
-	Interview                 canAddInterview = true  // 面接選考中
+	InterviewScreening        canAddInterview = true  // 面接選考中
 	InterviewRejected         canAddInterview = false // 面接不合格
 	InterviewDeclined         canAddInterview = false // 面接辞退
 	Offered                   canAddInterview = false // 内定

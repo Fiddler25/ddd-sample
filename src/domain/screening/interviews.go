@@ -1,4 +1,4 @@
-package interview
+package screening
 
 import "time"
 

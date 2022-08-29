@@ -1,11 +1,11 @@
-package interview
+package screening
 
 import (
 	"github.com/google/uuid"
 	"time"
 )
 
-type ID string
+type InterviewID string
 type screeningStepResult string
 
 const (
@@ -16,7 +16,7 @@ const (
 
 // Interview 面接
 type Interview struct {
-	interviewID         ID                  // 面接ID
+	interviewID         InterviewID         // 面接ID
 	interviewDate       time.Time           // 選考日
 	interviewNumber     int                 // 面接次数
 	screeningStepResult screeningStepResult // 面接結果
@@ -24,7 +24,7 @@ type Interview struct {
 
 func NewInterview(interviewDate time.Time, interviewNumber int) Interview {
 	return Interview{
-		interviewID:         ID(uuid.NewString()),
+		interviewID:         InterviewID(uuid.NewString()),
 		interviewDate:       interviewDate,
 		interviewNumber:     interviewNumber,
 		screeningStepResult: notEvaluated,

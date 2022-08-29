@@ -1,4 +1,4 @@
-package vo
+package screening
 
 import "fmt"
 
