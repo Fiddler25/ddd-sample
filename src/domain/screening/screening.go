@@ -51,8 +51,8 @@ func Apply(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 }
 
 // AddNextInterview 次の面接を設定する
-func AddNextInterview(s *Screening, interviewDate time.Time) (*Screening, error) {
-	if s.status != screening {
+func (s *Screening) AddNextInterview(interviewDate time.Time) (*Screening, error) {
+	if !s.status.CanAddInterview() {
 		return s, fmt.Errorf("不正な操作です")
 	}
 
