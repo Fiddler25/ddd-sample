@@ -2,14 +2,16 @@ package vo
 
 import "fmt"
 
-type EmailAddress string
+type EmailAddress struct {
+	value string
+}
 
 func NewEmailAddress(value string) (EmailAddress, error) {
 	if isEmpty(value) || isInvalidFormatEmailAddress(value) {
-		return "", fmt.Errorf("メールアドレスが正しくありません")
+		return EmailAddress{}, fmt.Errorf("メールアドレスが正しくありません")
 	}
 
-	return EmailAddress(value), nil
+	return EmailAddress{value}, nil
 }
 
 func isEmpty(value string) bool {
