@@ -9,19 +9,11 @@ import (
 )
 
 type ID string
-type status string
-
-const (
-	notApplied status = "NOT_APPLIED" // 未応募
-	screening  status = "SCREENING"   // 面接選考中
-	rejected   status = "REJECTED"    // 不合格
-	passed     status = "PASSED"      // 合格
-)
 
 // Screening 採用選考
 type Screening struct {
 	screeningID           ID                    // 採用選考ID
-	status                status                // 採用選考ステータス
+	status                ScreeningStatus       // 採用選考ステータス
 	applyDate             *time.Time            // 応募日
 	applicantEmailAddress vo.EmailAddress       // 応募者メールアドレス
 	interviews            []interview.Interview // 面接
@@ -36,8 +28,8 @@ func StartFromPreInterview(applicantEmailAddress vo.EmailAddress) (*Screening, e
 	s := newScreening()
 
 	s.screeningID = ID(uuid.NewString())
-	s.status = notApplied // 面談からの場合はステータス「未応募」で登録
-	s.applyDate = nil     // 未応募なので応募日はnull
+	s.status = ScreeningStatus{NotApplied} // 面談からの場合はステータス「未応募」で登録
+	s.applyDate = nil                      // 未応募なので応募日はnull
 	s.applicantEmailAddress = applicantEmailAddress
 	s.interviews = []interview.Interview{}
 
@@ -50,8 +42,8 @@ func Apply(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	now := time.Now()
 
 	s.screeningID = ID(uuid.NewString())
-	s.status = screening // 面接からの場合はステータス「面接」で登録
-	s.applyDate = &now   // 応募日は操作日付を使用
+	s.status = ScreeningStatus{Interview} // 面接からの場合はステータス「面接」で登録
+	s.applyDate = &now                    // 応募日は操作日付を使用
 	s.applicantEmailAddress = applicantEmailAddress
 	s.interviews = []interview.Interview{}
 
