@@ -4,7 +4,6 @@ import (
 	"ddd-sample/src/domain/interview"
 	"ddd-sample/src/domain/vo"
 	"fmt"
-	"github.com/google/uuid"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type ID string
 
 // Screening 採用選考
 type Screening struct {
-	screeningID           ID                   // 採用選考ID
+	screeningID           ScreeningID          // 採用選考ID
 	status                ScreeningStatus      // 採用選考ステータス
 	applyDate             *time.Time           // 応募日
 	applicantEmailAddress vo.EmailAddress      // 応募者メールアドレス
@@ -27,7 +26,7 @@ func newScreening() *Screening {
 func StartFromPreInterview(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	s := newScreening()
 
-	s.screeningID = ID(uuid.NewString())
+	s.screeningID = NewScreeningID()
 	s.status = ScreeningStatus{NotApplied} // 面談からの場合はステータス「未応募」で登録
 	s.applyDate = nil                      // 未応募なので応募日はnull
 	s.applicantEmailAddress = applicantEmailAddress
@@ -41,7 +40,7 @@ func Apply(applicantEmailAddress vo.EmailAddress) (*Screening, error) {
 	s := newScreening()
 	now := time.Now()
 
-	s.screeningID = ID(uuid.NewString())
+	s.screeningID = NewScreeningID()
 	s.status = ScreeningStatus{Interview} // 面接からの場合はステータス「面接」で登録
 	s.applyDate = &now                    // 応募日は操作日付を使用
 	s.applicantEmailAddress = applicantEmailAddress
