@@ -15,7 +15,12 @@ func NewScreeningUseCase(screening screening.ScreeningRepository) ScreeningUseCa
 
 // StartFromPreInterview 面談から新規候補者を登録する
 func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) error {
-	s, err := screening.StartFromPreInterview(applicantEmailAddress)
+	e, err := screening.NewEmailAddress(applicantEmailAddress)
+	if err != nil {
+		return err
+	}
+
+	s, err := screening.StartFromPreInterview(e)
 	if err != nil {
 		return err
 	}
@@ -25,7 +30,12 @@ func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) e
 
 // Apply 新規応募者を登録する
 func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
-	s, err := screening.Apply(applicantEmailAddress)
+	e, err := screening.NewEmailAddress(applicantEmailAddress)
+	if err != nil {
+		return err
+	}
+
+	s, err := screening.Apply(e)
 	if err != nil {
 		return err
 	}
@@ -34,12 +44,15 @@ func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
 }
 
 // AddNextInterview 次の面接を設定する
-func (uc ScreeningUseCase) AddNextInterview(screeningID screening.ID, interviewDate time.Time) error {
-	s, err := uc.screening.FindByID(screeningID)
+func (uc ScreeningUseCase) AddNextInterview(screeningID string, interviewDate time.Time) error {
+	s, err := uc.screening.FindByID(screening.ScreeningID(screeningID))
 	if err != nil {
 		return err
 	}
-	screening.AddNextInterview(s, interviewDate)
+
+	if err := s.AddNextInterview(interviewDate); err != nil {
+		return err
+	}
 
 	return uc.screening.Update(s)
 }
