@@ -1,12 +1,21 @@
 package screening
 
-import "ddd-sample/src/domain/screening"
+import (
+	"context"
+	"ddd-sample/ent"
+	"ddd-sample/src/domain/screening"
+)
 
 type screeningRepository struct {
+	ctx    context.Context
+	client *ent.Client
 }
 
-func NewScreeningRepository() screening.ScreeningRepository {
-	return &screeningRepository{}
+func NewScreeningRepository(ctx context.Context, client *ent.Client) screening.ScreeningRepository {
+	return &screeningRepository{
+		ctx:    ctx,
+		client: client,
+	}
 }
 
 func (r screeningRepository) FindByID(screeningId screening.ScreeningID) (*screening.Screening, error) {

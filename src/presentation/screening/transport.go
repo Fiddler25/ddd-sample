@@ -2,6 +2,7 @@ package screening
 
 import (
 	"context"
+	"ddd-sample/ent"
 	"ddd-sample/sdk/encode"
 	is "ddd-sample/src/infra/screening"
 	us "ddd-sample/src/usecase/screening"
@@ -11,8 +12,8 @@ import (
 	"net/http"
 )
 
-func MakeHandler() http.Handler {
-	screeningRepo := is.NewScreeningRepository()
+func MakeHandler(ctx context.Context, client *ent.Client) http.Handler {
+	screeningRepo := is.NewScreeningRepository(ctx, client)
 
 	applyHandler := kithttp.NewServer(
 		makeApply(us.NewScreeningUseCase(screeningRepo)),
