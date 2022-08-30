@@ -14,21 +14,21 @@ import (
 func MakeHandler() http.Handler {
 	screeningRepo := is.NewScreeningRepository()
 
-	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterview(us.NewScreeningUseCase(screeningRepo)),
-		decodeStartFromPreInterviewRequest,
+	applyHandler := kithttp.NewServer(
+		makeApply(us.NewScreeningUseCase(screeningRepo)),
+		decodeApplyRequest,
 		encode.Response,
 	)
 
 	r := mux.NewRouter()
 
-	r.Handle("/screening/v1/start_from_pre_interview", startFromPreInterviewHandler).Methods("POST")
+	r.Handle("/screening/v1/apply_interview", applyHandler).Methods("POST")
 
 	return r
 }
 
-func decodeStartFromPreInterviewRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req startFromPreInterviewRequest
+func decodeApplyRequest(_ context.Context, r *http.Request) (interface{}, error) {
+	var req applyRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}

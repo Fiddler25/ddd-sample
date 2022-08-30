@@ -2,7 +2,6 @@ package screening
 
 import (
 	"ddd-sample/src/domain/screening"
-	"ddd-sample/src/domain/vo"
 	"time"
 )
 
@@ -16,7 +15,7 @@ func NewScreeningUseCase(screening screening.ScreeningRepository) ScreeningUseCa
 
 // StartFromPreInterview 面談から新規候補者を登録する
 func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) error {
-	e, err := vo.NewEmailAddress(applicantEmailAddress)
+	e, err := screening.NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
 	}
@@ -25,13 +24,13 @@ func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) e
 	if err != nil {
 		return err
 	}
-	
+
 	return uc.screening.Insert(s)
 }
 
 // Apply 新規応募者を登録する
 func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
-	e, err := vo.NewEmailAddress(applicantEmailAddress)
+	e, err := screening.NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
 	}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	ps "ddd-sample/src/presentation/screening"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 func main() {
 	mux := http.NewServeMux()
+	mux.Handle("/screening/v1/", ps.MakeHandler())
 
 	http.Handle("/", accessControl(mux))
 
