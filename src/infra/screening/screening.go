@@ -3,7 +3,10 @@ package screening
 import (
 	"context"
 	"ddd-sample/ent"
+	"ddd-sample/ent/schema"
+	"ddd-sample/ent/schema/property"
 	"ddd-sample/src/domain/screening"
+	"strconv"
 )
 
 type screeningRepository struct {
@@ -22,7 +25,17 @@ func (r screeningRepository) FindByID(screeningId screening.ScreeningID) (*scree
 	return nil, nil
 }
 
-func (r screeningRepository) Insert(screening *screening.Screening) error {
+func (r screeningRepository) Insert(s *screening.Screening) error {
+	screeningID, _ := strconv.Atoi(string(s.ScreeningID))
+	if _, err := r.client.Screening.
+		Create().
+		SetID(schema.ScreeningID(screeningID)).
+		SetScreeningStatus(property.ScreeningStatus(s.Status)).
+		SetNillableApplyDate(s.ApplyDate).
+		SetApplicantEmailAddress(string(s.ApplicantEmailAddress)).
+		Save(r.ctx); err != nil {
+		return err
+	}
 	return nil
 }
 
