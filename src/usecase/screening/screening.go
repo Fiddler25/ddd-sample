@@ -44,12 +44,15 @@ func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
 }
 
 // AddNextInterview 次の面接を設定する
-func (uc ScreeningUseCase) AddNextInterview(screeningID screening.ID, interviewDate time.Time) error {
-	s, err := uc.screening.FindByID(screeningID)
+func (uc ScreeningUseCase) AddNextInterview(screeningID string, interviewDate time.Time) error {
+	s, err := uc.screening.FindByID(screening.ScreeningID(screeningID))
 	if err != nil {
 		return err
 	}
-	screening.AddNextInterview(s, interviewDate)
+
+	if err := s.AddNextInterview(interviewDate); err != nil {
+		return err
+	}
 
 	return uc.screening.Update(s)
 }

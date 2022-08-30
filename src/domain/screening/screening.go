@@ -46,12 +46,12 @@ func Apply(applicantEmailAddress EmailAddress) (*Screening, error) {
 }
 
 // AddNextInterview 次の面接を設定する
-func (s *Screening) AddNextInterview(interviewDate time.Time) (*Screening, error) {
+func (s *Screening) AddNextInterview(interviewDate time.Time) error {
 	if !s.Status.CanAddInterview() {
-		return s, fmt.Errorf("不正な操作です")
+		return fmt.Errorf("不正な操作です")
 	}
 
 	s.Interviews.AddNextInterview(interviewDate)
 
-	return s, nil
+	return nil
 }

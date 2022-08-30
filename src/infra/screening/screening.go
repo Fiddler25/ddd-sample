@@ -7,6 +7,7 @@ import (
 	"ddd-sample/ent/schema/property"
 	"ddd-sample/sdk/convert"
 	"ddd-sample/src/domain/screening"
+	"strconv"
 )
 
 type screeningRepository struct {
@@ -21,8 +22,22 @@ func NewScreeningRepository(ctx context.Context, client *ent.Client) screening.S
 	}
 }
 
-func (r screeningRepository) FindByID(screeningId screening.ScreeningID) (*screening.Screening, error) {
-	return nil, nil
+func (r screeningRepository) FindByID(id screening.ScreeningID) (*screening.Screening, error) {
+	screeningID := convert.StrToInt[schema.ScreeningID](string(id))
+	s, err := r.client.Screening.Get(r.ctx, screeningID)
+	if err != nil {
+		return nil, err
+	}
+	return reconstruct(s), nil
+}
+
+func reconstruct(s *ent.Screening) *screening.Screening {
+	return &screening.Screening{
+		ScreeningID:           screening.ScreeningID(strconv.Itoa(int(s.ID))),
+		Status:                screening.ScreeningStatus(s.ScreeningStatus),
+		ApplyDate:             s.ApplyDate,
+		ApplicantEmailAddress: screening.EmailAddress(s.ApplicantEmailAddress),
+	}
 }
 
 func (r screeningRepository) Insert(s *screening.Screening) error {
@@ -40,5 +55,6 @@ func (r screeningRepository) Insert(s *screening.Screening) error {
 }
 
 func (r screeningRepository) Update(screening *screening.Screening) error {
+	// 更新処理
 	return nil
 }
