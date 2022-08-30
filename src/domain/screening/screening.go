@@ -55,3 +55,12 @@ func (s *Screening) AddNextInterview(interviewDate time.Time) error {
 
 	return nil
 }
+
+func (s Screening) StepToNext() error {
+	status, err := s.Status.NextStep()
+	if err != nil {
+		return err
+	}
+	s.Status = status
+	return nil
+}
