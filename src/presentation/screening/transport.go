@@ -23,7 +23,7 @@ func MakeHandler(ctx context.Context, client *ent.Client) http.Handler {
 
 	r := mux.NewRouter()
 
-	r.Handle("/screening/v1/apply_interview", applyHandler).Methods("POST")
+	r.Handle("/screening/v1/apply", applyHandler).Methods("POST")
 
 	return r
 }

@@ -5,8 +5,8 @@ import (
 	"ddd-sample/ent"
 	"ddd-sample/ent/schema"
 	"ddd-sample/ent/schema/property"
+	"ddd-sample/sdk/convert"
 	"ddd-sample/src/domain/screening"
-	"strconv"
 )
 
 type screeningRepository struct {
@@ -26,10 +26,10 @@ func (r screeningRepository) FindByID(screeningId screening.ScreeningID) (*scree
 }
 
 func (r screeningRepository) Insert(s *screening.Screening) error {
-	screeningID, _ := strconv.Atoi(string(s.ScreeningID))
+	screeningID := convert.StrToInt[schema.ScreeningID](string(s.ScreeningID))
 	if _, err := r.client.Screening.
 		Create().
-		SetID(schema.ScreeningID(screeningID)).
+		SetID(screeningID).
 		SetScreeningStatus(property.ScreeningStatus(s.Status)).
 		SetNillableApplyDate(s.ApplyDate).
 		SetApplicantEmailAddress(string(s.ApplicantEmailAddress)).
