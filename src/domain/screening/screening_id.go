@@ -2,10 +2,8 @@ package screening
 
 import "github.com/google/uuid"
 
-type ScreeningID struct {
-	value string
-}
+type ScreeningID string
 
 func NewScreeningID() ScreeningID {
-	return ScreeningID{value: uuid.NewString()}
+	return ScreeningID(uuid.NewString())
 }

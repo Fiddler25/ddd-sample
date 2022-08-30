@@ -7,11 +7,11 @@ import (
 
 // Screening 採用選考
 type Screening struct {
-	screeningID           ScreeningID     // 採用選考ID
-	status                ScreeningStatus // 採用選考ステータス
-	applyDate             *time.Time      // 応募日
-	applicantEmailAddress EmailAddress    // 応募者メールアドレス
-	interviews            Interviews      // 面接
+	ScreeningID           ScreeningID     // 採用選考ID
+	Status                ScreeningStatus // 採用選考ステータス
+	ApplyDate             *time.Time      // 応募日
+	ApplicantEmailAddress EmailAddress    // 応募者メールアドレス
+	Interviews            Interviews      // 面接
 }
 
 func newScreening() *Screening {
@@ -22,11 +22,11 @@ func newScreening() *Screening {
 func StartFromPreInterview(applicantEmailAddress EmailAddress) (*Screening, error) {
 	s := newScreening()
 
-	s.screeningID = NewScreeningID()
-	s.status = ScreeningStatus{NotApplied} // 面談からの場合はステータス「未応募」で登録
-	s.applyDate = nil                      // 未応募なので応募日はnull
-	s.applicantEmailAddress = applicantEmailAddress
-	s.interviews = NewInterviews()
+	s.ScreeningID = NewScreeningID()
+	s.Status = NotApplied // 面談からの場合はステータス「未応募」で登録
+	s.ApplyDate = nil     // 未応募なので応募日はnull
+	s.ApplicantEmailAddress = applicantEmailAddress
+	s.Interviews = NewInterviews()
 
 	return s, nil
 }
@@ -36,22 +36,22 @@ func Apply(applicantEmailAddress EmailAddress) (*Screening, error) {
 	s := newScreening()
 	now := time.Now()
 
-	s.screeningID = NewScreeningID()
-	s.status = ScreeningStatus{InterviewScreening} // 面接からの場合はステータス「面接」で登録
-	s.applyDate = &now                             // 応募日は操作日付を使用
-	s.applicantEmailAddress = applicantEmailAddress
-	s.interviews = NewInterviews()
+	s.ScreeningID = NewScreeningID()
+	s.Status = InterviewScreening // 面接からの場合はステータス「面接選考中」で登録
+	s.ApplyDate = &now            // 応募日は登録日を使用
+	s.ApplicantEmailAddress = applicantEmailAddress
+	s.Interviews = NewInterviews()
 
 	return s, nil
 }
 
 // AddNextInterview 次の面接を設定する
 func (s *Screening) AddNextInterview(interviewDate time.Time) (*Screening, error) {
-	if !s.status.CanAddInterview() {
+	if !s.Status.CanAddInterview() {
 		return s, fmt.Errorf("不正な操作です")
 	}
 
-	s.interviews.AddNextInterview(interviewDate)
+	s.Interviews.AddNextInterview(interviewDate)
 
 	return s, nil
 }

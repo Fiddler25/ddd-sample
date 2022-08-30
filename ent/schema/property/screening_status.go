@@ -1,4 +1,4 @@
-package screening
+package property
 
 type ScreeningStatus string
 
@@ -15,13 +15,20 @@ const (
 	Entered                   ScreeningStatus = "ENTERED"                     // 入社済
 )
 
-func (s ScreeningStatus) CanAddInterview() bool {
-	return s.canAddInterview()
-}
-
-func (s ScreeningStatus) canAddInterview() bool {
-	if s == InterviewScreening {
-		return true
+func (ScreeningStatus) Values() (kinds []string) {
+	for _, s := range []ScreeningStatus{
+		NotApplied,
+		DocumentScreening,
+		DocumentScreeningRejected,
+		DocumentScreeningDeclined,
+		InterviewScreening,
+		InterviewRejected,
+		InterviewDeclined,
+		Offered,
+		OfferDeclined,
+		Entered,
+	} {
+		kinds = append(kinds, string(s))
 	}
-	return false
+	return
 }

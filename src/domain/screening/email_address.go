@@ -2,16 +2,14 @@ package screening
 
 import "fmt"
 
-type EmailAddress struct {
-	value string
-}
+type EmailAddress string
 
 func NewEmailAddress(value string) (EmailAddress, error) {
 	if isEmpty(value) || isInvalidFormatEmailAddress(value) {
-		return EmailAddress{}, fmt.Errorf("メールアドレスが正しくありません")
+		return "", fmt.Errorf("メールアドレスが正しくありません")
 	}
 
-	return EmailAddress{value}, nil
+	return EmailAddress(value), nil
 }
 
 func isEmpty(value string) bool {
