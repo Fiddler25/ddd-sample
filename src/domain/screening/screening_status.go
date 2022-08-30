@@ -1,5 +1,7 @@
 package screening
 
+import "fmt"
+
 type ScreeningStatus string
 
 const (
@@ -15,13 +17,72 @@ const (
 	Entered                   ScreeningStatus = "ENTERED"                     // 入社済
 )
 
-func (s ScreeningStatus) CanAddInterview() bool {
-	return s.canAddInterview()
+// NextStep 次のステップのステータスを取得する
+func (s ScreeningStatus) NextStep() (ScreeningStatus, error) {
+	switch s {
+	case NotApplied:
+		return DocumentScreening, nil
+	case DocumentScreening:
+		return InterviewScreening, nil
+	case InterviewScreening:
+		return Offered, nil
+	case Offered:
+		return Entered, nil
+	default:
+		return "", fmt.Errorf("許可されていない状態遷移です")
+	}
 }
 
-func (s ScreeningStatus) canAddInterview() bool {
-	if s == InterviewScreening {
-		return true
+// PreviousStep 「戻る」した時のステータスを取得する
+func (s ScreeningStatus) PreviousStep() (ScreeningStatus, error) {
+	switch s {
+	case DocumentScreeningRejected:
+		return DocumentScreening, nil
+	case DocumentScreeningDeclined:
+		return DocumentScreening, nil
+	case InterviewScreening:
+		return DocumentScreening, nil
+	case InterviewRejected:
+		return InterviewScreening, nil
+	case InterviewDeclined:
+		return InterviewScreening, nil
+	case Offered:
+		return InterviewScreening, nil
+	case OfferDeclined:
+		return Offered, nil
+	case Entered:
+		return Offered, nil
+	default:
+		return "", fmt.Errorf("許可されていない状態遷移です")
 	}
-	return false
+}
+
+// RejectStep 「不合格」した時のステータスを取得する
+func (s ScreeningStatus) RejectStep() (ScreeningStatus, error) {
+	switch s {
+	case DocumentScreening:
+		return DocumentScreeningRejected, nil
+	case InterviewScreening:
+		return InterviewRejected, nil
+	default:
+		return "", fmt.Errorf("許可されていない状態遷移です")
+	}
+}
+
+// DeclineStep 「辞退」した時のステータスを取得する
+func (s ScreeningStatus) DeclineStep() (ScreeningStatus, error) {
+	switch s {
+	case DocumentScreening:
+		return DocumentScreeningDeclined, nil
+	case InterviewScreening:
+		return InterviewDeclined, nil
+	case Offered:
+		return OfferDeclined, nil
+	default:
+		return "", fmt.Errorf("許可されていない状態遷移です")
+	}
+}
+
+func (s ScreeningStatus) CanAddInterview() bool {
+	return s == InterviewScreening
 }

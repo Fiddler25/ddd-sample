@@ -56,3 +56,14 @@ func (uc ScreeningUseCase) AddNextInterview(screeningID string, interviewDate ti
 
 	return uc.screening.Update(s)
 }
+
+// StepToNext 採用選考を次のステップに進める
+func (uc ScreeningUseCase) StepToNext(screeningID string) error {
+	s, err := uc.screening.FindByID(screening.ScreeningID(screeningID))
+	if err != nil {
+		return err
+	}
+
+	s.StepToNext()
+	return uc.screening.Update(s)
+}
