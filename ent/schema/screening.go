@@ -18,7 +18,7 @@ type Screening struct {
 
 func (Screening) Fields() []ent.Field {
 	return []ent.Field{
-		field.Int("id").GoType(ScreeningID(0)),
+		field.String("id").MaxLen(50).NotEmpty().Unique().Immutable(),
 		field.Enum("screening_status").GoType(property.ScreeningStatus("")).Default(string(property.NotApplied)).Comment("採用選考ステータス"),
 		field.Time("apply_date").SchemaType(mapping.Date).Optional().Nillable().Comment("応募日"),
 		field.String("applicant_email_address").SchemaType(map[string]string{dialect.MySQL: "varchar(50)"}).Comment("応募者メールアドレス"),

@@ -3,11 +3,8 @@ package screening
 import (
 	"context"
 	"ddd-sample/ent"
-	"ddd-sample/ent/schema"
 	"ddd-sample/ent/schema/property"
-	"ddd-sample/sdk/convert"
 	"ddd-sample/src/domain/screening"
-	"strconv"
 )
 
 type screeningRepository struct {
@@ -22,9 +19,8 @@ func NewScreeningRepository(ctx context.Context, client *ent.Client) screening.S
 	}
 }
 
-func (r screeningRepository) FindByID(id screening.ScreeningID) (*screening.Screening, error) {
-	screeningID := convert.StrToInt[schema.ScreeningID](string(id))
-	s, err := r.client.Screening.Get(r.ctx, screeningID)
+func (r screeningRepository) FindByID(screeningID screening.ScreeningID) (*screening.Screening, error) {
+	s, err := r.client.Screening.Get(r.ctx, string(screeningID))
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +29,7 @@ func (r screeningRepository) FindByID(id screening.ScreeningID) (*screening.Scre
 
 func reconstruct(s *ent.Screening) *screening.Screening {
 	return &screening.Screening{
-		ScreeningID:           screening.ScreeningID(strconv.Itoa(int(s.ID))),
+		ScreeningID:           screening.ScreeningID(s.ID),
 		Status:                screening.ScreeningStatus(s.ScreeningStatus),
 		ApplyDate:             s.ApplyDate,
 		ApplicantEmailAddress: screening.EmailAddress(s.ApplicantEmailAddress),
@@ -41,10 +37,9 @@ func reconstruct(s *ent.Screening) *screening.Screening {
 }
 
 func (r screeningRepository) Insert(s *screening.Screening) error {
-	screeningID := convert.StrToInt[schema.ScreeningID](string(s.ScreeningID))
 	if _, err := r.client.Screening.
 		Create().
-		SetID(screeningID).
+		SetID(string(s.ScreeningID)).
 		SetScreeningStatus(property.ScreeningStatus(s.Status)).
 		SetNillableApplyDate(s.ApplyDate).
 		SetApplicantEmailAddress(string(s.ApplicantEmailAddress)).
