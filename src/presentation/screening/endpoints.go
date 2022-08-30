@@ -4,6 +4,7 @@ import (
 	"context"
 	"ddd-sample/src/usecase/screening"
 	"github.com/go-kit/kit/endpoint"
+	"time"
 )
 
 // StartFromPreInterview
@@ -45,5 +46,27 @@ func makeApply(uc screening.ScreeningUseCase) endpoint.Endpoint {
 		req := request.(applyRequest)
 		err := uc.Apply(req.ApplicantEmailAddress)
 		return applyResponse{Err: err}, nil
+	}
+}
+
+// AddNextInterview
+type (
+	addNextInterviewRequest struct {
+		ScreeningID   string    `json:"screening_id"`
+		InterviewDate time.Time `json:"interview_date"`
+	}
+
+	addNextInterviewResponse struct {
+		Err error `json:"error,omitempty"`
+	}
+)
+
+func (r addNextInterviewResponse) error() error { return r.Err }
+
+func makeAddNextInterview(uc screening.ScreeningUseCase) endpoint.Endpoint {
+	return func(_ context.Context, request interface{}) (interface{}, error) {
+		req := request.(addNextInterviewRequest)
+		err := uc.AddNextInterview(req.ScreeningID, req.InterviewDate)
+		return addNextInterviewResponse{Err: err}, nil
 	}
 }
