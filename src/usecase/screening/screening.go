@@ -19,11 +19,7 @@ func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) e
 	if err != nil {
 		return err
 	}
-
-	s, err := screening.StartFromPreInterview(e)
-	if err != nil {
-		return err
-	}
+	s := screening.StartFromPreInterview(e)
 
 	return uc.screening.Insert(s)
 }
@@ -34,11 +30,7 @@ func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
 	if err != nil {
 		return err
 	}
-
-	s, err := screening.Apply(e)
-	if err != nil {
-		return err
-	}
+	s := screening.Apply(e)
 
 	return uc.screening.Insert(s)
 }
