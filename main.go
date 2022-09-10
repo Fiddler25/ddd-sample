@@ -2,7 +2,7 @@ package main
 
 import (
 	"ddd-sample/ent"
-	ps "ddd-sample/src/presentation/screening"
+	"ddd-sample/src/screening"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
@@ -13,7 +13,7 @@ func main() {
 	defer client.Close()
 
 	mux := http.NewServeMux()
-	mux.Handle("/screening/v1/", ps.MakeHandler(ctx, client))
+	mux.Handle("/screening/v1/", screening.MakeHandler(ctx, client))
 
 	http.Handle("/", accessControl(mux))
 

@@ -2,7 +2,6 @@ package screening
 
 import (
 	"context"
-	"ddd-sample/src/usecase/screening"
 	"github.com/go-kit/kit/endpoint"
 	"time"
 )
@@ -20,7 +19,7 @@ type (
 
 func (r startFromPreInterviewResponse) error() error { return r.Err }
 
-func makeStartFromPreInterview(uc screening.ScreeningUseCase) endpoint.Endpoint {
+func makeStartFromPreInterview(uc ScreeningUseCase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(startFromPreInterviewRequest)
 		err := uc.StartFromPreInterview(req.ApplicantEmailAddress)
@@ -41,7 +40,7 @@ type (
 
 func (r applyResponse) error() error { return r.Err }
 
-func makeApply(uc screening.ScreeningUseCase) endpoint.Endpoint {
+func makeApply(uc ScreeningUseCase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(applyRequest)
 		err := uc.Apply(req.ApplicantEmailAddress)
@@ -63,7 +62,7 @@ type (
 
 func (r addNextInterviewResponse) error() error { return r.Err }
 
-func makeAddNextInterview(uc screening.ScreeningUseCase) endpoint.Endpoint {
+func makeAddNextInterview(uc ScreeningUseCase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(addNextInterviewRequest)
 		err := uc.AddNextInterview(req.ScreeningID, req.InterviewDate)

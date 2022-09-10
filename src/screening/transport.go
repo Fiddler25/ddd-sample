@@ -4,8 +4,6 @@ import (
 	"context"
 	"ddd-sample/ent"
 	"ddd-sample/sdk/encode"
-	is "ddd-sample/src/infra/screening"
-	us "ddd-sample/src/usecase/screening"
 	"encoding/json"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
@@ -13,20 +11,20 @@ import (
 )
 
 func MakeHandler(ctx context.Context, client *ent.Client) http.Handler {
-	screeningRepo := is.NewScreeningRepository(ctx, client)
+	screeningRepo := NewScreeningRepository(ctx, client)
 
 	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterview(us.NewScreeningUseCase(screeningRepo)),
+		makeStartFromPreInterview(NewScreeningUseCase(screeningRepo)),
 		decodeStartFromPreInterviewRequest,
 		encode.Response,
 	)
 	applyHandler := kithttp.NewServer(
-		makeApply(us.NewScreeningUseCase(screeningRepo)),
+		makeApply(NewScreeningUseCase(screeningRepo)),
 		decodeApplyRequest,
 		encode.Response,
 	)
 	addNextInterviewHandler := kithttp.NewServer(
-		makeAddNextInterview(us.NewScreeningUseCase(screeningRepo)),
+		makeAddNextInterview(NewScreeningUseCase(screeningRepo)),
 		decodeAddNextInterview,
 		encode.Response,
 	)
