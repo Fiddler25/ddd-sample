@@ -1,6 +1,8 @@
 package screening
 
 import (
+	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"testing"
 	"time"
 )
@@ -33,10 +35,14 @@ func TestNewInterview(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got := NewInterview(tt.args.interviewDate, tt.args.interviewNumber)
-			tt.want.interviewID = got.interviewID
 
-			if got != tt.want {
-				t.Errorf("NewInterview() = %v, want %v", got, tt.want)
+			opts := []cmp.Option{
+				cmp.AllowUnexported(Interview{}),
+				cmpopts.IgnoreFields(Interview{}, "interviewID"),
+			}
+
+			if diff := cmp.Diff(tt.want, got, opts...); diff != "" {
+				t.Errorf("NewInterview() mismatch (-want, +got):\n%s", diff)
 			}
 		})
 	}

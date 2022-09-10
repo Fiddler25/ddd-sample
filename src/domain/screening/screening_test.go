@@ -3,7 +3,6 @@ package screening
 import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/google/go-cmp/cmp/cmpopts"
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
@@ -26,7 +25,6 @@ func TestStartFromPreInterview(t *testing.T) {
 			name: "採用選考を登録すると、ステータスが「未応募」・応募日がnullのインスタンスが生成されること",
 			args: args{applicantEmailAddress: EmailAddress("test@example.com")},
 			want: &Screening{
-				ScreeningID:           NewScreeningID(),
 				Status:                NotApplied,
 				ApplyDate:             nil,
 				ApplicantEmailAddress: EmailAddress("test@example.com"),
@@ -64,9 +62,7 @@ func TestApply(t *testing.T) {
 			name: "採用選考を登録すると、ステータスが「面接選考中」・応募日が本日のインスタンスが生成されること",
 			args: args{applicantEmailAddress: EmailAddress("test@example.com")},
 			want: &Screening{
-				ScreeningID:           NewScreeningID(),
 				Status:                InterviewScreening,
-				ApplyDate:             &now,
 				ApplicantEmailAddress: EmailAddress("test@example.com"),
 				Interviews:            NewInterviews(),
 			},
@@ -102,7 +98,7 @@ func TestAddNextInterview(t *testing.T) {
 		wantError bool
 	}{
 		{
-			name: "採用選考ステータスが「面接選考中」の場合、面接を追加すると面接次数がインクリメントされること",
+			name: "有効な採用選考ステータスの場合、面接を追加すると面接次数がインクリメントされること",
 			args: args{interviewDate: now},
 			screening: &Screening{
 				ScreeningID:           NewScreeningID(),
@@ -114,7 +110,6 @@ func TestAddNextInterview(t *testing.T) {
 			want: Interviews{
 				[]Interview{
 					{
-						interviewID:         InterviewID(uuid.NewString()),
 						interviewDate:       now,
 						interviewNumber:     1,
 						screeningStepResult: notEvaluated,
@@ -124,7 +119,7 @@ func TestAddNextInterview(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "採用選考ステータスが「未応募」の場合、エラーを返すこと",
+			name: "無効な採用選考ステータスの場合、エラーを返すこと",
 			args: args{interviewDate: now},
 			screening: &Screening{
 				ScreeningID:           NewScreeningID(),
