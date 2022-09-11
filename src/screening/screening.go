@@ -19,7 +19,7 @@ func newScreening() *Screening {
 }
 
 // StartFromPreInterview 面談から採用選考を登録する際のファクトリメソッド
-func StartFromPreInterview(applicantEmailAddress EmailAddress) (*Screening, error) {
+func StartFromPreInterview(applicantEmailAddress EmailAddress) *Screening {
 	s := newScreening()
 
 	s.ScreeningID = NewScreeningID()
@@ -28,11 +28,11 @@ func StartFromPreInterview(applicantEmailAddress EmailAddress) (*Screening, erro
 	s.ApplicantEmailAddress = applicantEmailAddress
 	s.Interviews = NewInterviews()
 
-	return s, nil
+	return s
 }
 
 // Apply 面接から採用選考を登録する際のファクトリメソッド
-func Apply(applicantEmailAddress EmailAddress) (*Screening, error) {
+func Apply(applicantEmailAddress EmailAddress) *Screening {
 	s := newScreening()
 	now := time.Now()
 
@@ -42,7 +42,7 @@ func Apply(applicantEmailAddress EmailAddress) (*Screening, error) {
 	s.ApplicantEmailAddress = applicantEmailAddress
 	s.Interviews = NewInterviews()
 
-	return s, nil
+	return s
 }
 
 // AddNextInterview 次の面接を設定する
@@ -56,7 +56,7 @@ func (s *Screening) AddNextInterview(interviewDate time.Time) error {
 	return nil
 }
 
-func (s Screening) StepToNext() error {
+func (s *Screening) StepToNext() error {
 	status, err := s.Status.NextStep()
 	if err != nil {
 		return err

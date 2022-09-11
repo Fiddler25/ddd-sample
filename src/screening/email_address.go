@@ -1,6 +1,9 @@
 package screening
 
-import "fmt"
+import (
+	"fmt"
+	"net/mail"
+)
 
 type EmailAddress string
 
@@ -17,6 +20,6 @@ func isEmpty(value string) bool {
 }
 
 func isInvalidFormatEmailAddress(email string) bool {
-	// 何らかの処理
-	return false
+	_, err := mail.ParseAddress(email)
+	return err != nil
 }

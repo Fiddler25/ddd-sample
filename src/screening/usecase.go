@@ -27,7 +27,7 @@ func (uc usecase) StartFromPreInterview(ctx context.Context, applicantEmailAddre
 		return err
 	}
 
-	s, err := StartFromPreInterview(e)
+	s := StartFromPreInterview(e)
 	if err != nil {
 		return err
 	}
@@ -42,7 +42,7 @@ func (uc usecase) Apply(ctx context.Context, applicantEmailAddress string) error
 		return err
 	}
 
-	s, err := Apply(e)
+	s := Apply(e)
 	if err != nil {
 		return err
 	}
