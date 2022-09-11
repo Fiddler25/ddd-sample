@@ -4,17 +4,18 @@ import (
 	"context"
 	"ddd-sample/ent"
 	"ddd-sample/ent/schema/property"
+	"ddd-sample/src/screening/domain"
 )
 
 type screeningRepository struct {
 	client *ent.Client
 }
 
-func NewScreeningRepository(client *ent.Client) ScreeningRepository {
+func NewScreeningRepository(client *ent.Client) domain.ScreeningRepository {
 	return &screeningRepository{client: client}
 }
 
-func (r screeningRepository) FindByID(ctx context.Context, screeningID ScreeningID) (*Screening, error) {
+func (r screeningRepository) FindByID(ctx context.Context, screeningID domain.ScreeningID) (*domain.Screening, error) {
 	s, err := r.client.Screening.Get(ctx, string(screeningID))
 	if err != nil {
 		return nil, err
@@ -22,16 +23,16 @@ func (r screeningRepository) FindByID(ctx context.Context, screeningID Screening
 	return reconstruct(s), nil
 }
 
-func reconstruct(s *ent.Screening) *Screening {
-	return &Screening{
-		ScreeningID:           ScreeningID(s.ID),
-		Status:                ScreeningStatus(s.ScreeningStatus),
+func reconstruct(s *ent.Screening) *domain.Screening {
+	return &domain.Screening{
+		ScreeningID:           domain.ScreeningID(s.ID),
+		Status:                domain.ScreeningStatus(s.ScreeningStatus),
 		ApplyDate:             s.ApplyDate,
-		ApplicantEmailAddress: EmailAddress(s.ApplicantEmailAddress),
+		ApplicantEmailAddress: domain.EmailAddress(s.ApplicantEmailAddress),
 	}
 }
 
-func (r screeningRepository) Insert(ctx context.Context, s *Screening) error {
+func (r screeningRepository) Insert(ctx context.Context, s *domain.Screening) error {
 	if _, err := r.client.Screening.
 		Create().
 		SetID(string(s.ScreeningID)).
@@ -44,7 +45,7 @@ func (r screeningRepository) Insert(ctx context.Context, s *Screening) error {
 	return nil
 }
 
-func (r screeningRepository) Update(ctx context.Context, screening *Screening) error {
+func (r screeningRepository) Update(ctx context.Context, screening *domain.Screening) error {
 	// 更新処理
 	return nil
 }

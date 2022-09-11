@@ -1,6 +1,8 @@
-package screening
+package domain
 
-import "context"
+import (
+	"context"
+)
 
 type ScreeningRepository interface {
 	FindByID(ctx context.Context, screeningId ScreeningID) (*Screening, error)

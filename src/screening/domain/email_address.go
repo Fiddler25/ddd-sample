@@ -1,4 +1,4 @@
-package screening
+package domain
 
 import (
 	"fmt"
