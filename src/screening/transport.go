@@ -9,19 +9,19 @@ import (
 	"net/http"
 )
 
-func MakeHandler(uc Usecase) http.Handler {
+func MakeHandler(ctx context.Context, uc Usecase) http.Handler {
 	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterview(uc),
+		makeStartFromPreInterview(ctx, uc),
 		decodeStartFromPreInterviewRequest,
 		encode.Response,
 	)
 	applyHandler := kithttp.NewServer(
-		makeApply(uc),
+		makeApply(ctx, uc),
 		decodeApplyRequest,
 		encode.Response,
 	)
 	addNextInterviewHandler := kithttp.NewServer(
-		makeAddNextInterview(uc),
+		makeAddNextInterview(ctx, uc),
 		decodeAddNextInterview,
 		encode.Response,
 	)

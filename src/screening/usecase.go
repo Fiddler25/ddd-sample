@@ -1,14 +1,15 @@
 package screening
 
 import (
+	"context"
 	"time"
 )
 
 type Usecase interface {
-	StartFromPreInterview(applicantEmailAddress string) error
-	Apply(applicantEmailAddress string) error
-	AddNextInterview(screeningID string, interviewDate time.Time) error
-	StepToNext(screeningID string) error
+	StartFromPreInterview(ctx context.Context, applicantEmailAddress string) error
+	Apply(ctx context.Context, applicantEmailAddress string) error
+	AddNextInterview(ctx context.Context, screeningID string, interviewDate time.Time) error
+	StepToNext(ctx context.Context, screeningID string) error
 }
 
 type usecase struct {
@@ -20,7 +21,7 @@ func NewUsecase(screening ScreeningRepository) Usecase {
 }
 
 // StartFromPreInterview 面談から新規候補者を登録する
-func (uc usecase) StartFromPreInterview(applicantEmailAddress string) error {
+func (uc usecase) StartFromPreInterview(ctx context.Context, applicantEmailAddress string) error {
 	e, err := NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
@@ -31,11 +32,11 @@ func (uc usecase) StartFromPreInterview(applicantEmailAddress string) error {
 		return err
 	}
 
-	return uc.screening.Insert(s)
+	return uc.screening.Insert(ctx, s)
 }
 
 // Apply 新規応募者を登録する
-func (uc usecase) Apply(applicantEmailAddress string) error {
+func (uc usecase) Apply(ctx context.Context, applicantEmailAddress string) error {
 	e, err := NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
@@ -46,12 +47,12 @@ func (uc usecase) Apply(applicantEmailAddress string) error {
 		return err
 	}
 
-	return uc.screening.Insert(s)
+	return uc.screening.Insert(ctx, s)
 }
 
 // AddNextInterview 次の面接を設定する
-func (uc usecase) AddNextInterview(screeningID string, interviewDate time.Time) error {
-	s, err := uc.screening.FindByID(ScreeningID(screeningID))
+func (uc usecase) AddNextInterview(ctx context.Context, screeningID string, interviewDate time.Time) error {
+	s, err := uc.screening.FindByID(ctx, ScreeningID(screeningID))
 	if err != nil {
 		return err
 	}
@@ -60,16 +61,16 @@ func (uc usecase) AddNextInterview(screeningID string, interviewDate time.Time) 
 		return err
 	}
 
-	return uc.screening.Update(s)
+	return uc.screening.Update(ctx, s)
 }
 
 // StepToNext 採用選考を次のステップに進める
-func (uc usecase) StepToNext(screeningID string) error {
-	s, err := uc.screening.FindByID(ScreeningID(screeningID))
+func (uc usecase) StepToNext(ctx context.Context, screeningID string) error {
+	s, err := uc.screening.FindByID(ctx, ScreeningID(screeningID))
 	if err != nil {
 		return err
 	}
 
 	s.StepToNext()
-	return uc.screening.Update(s)
+	return uc.screening.Update(ctx, s)
 }

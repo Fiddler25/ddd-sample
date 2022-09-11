@@ -19,10 +19,10 @@ type (
 
 func (r startFromPreInterviewResponse) error() error { return r.Err }
 
-func makeStartFromPreInterview(uc Usecase) endpoint.Endpoint {
+func makeStartFromPreInterview(ctx context.Context, uc Usecase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(startFromPreInterviewRequest)
-		err := uc.StartFromPreInterview(req.ApplicantEmailAddress)
+		err := uc.StartFromPreInterview(ctx, req.ApplicantEmailAddress)
 		return startFromPreInterviewResponse{Err: err}, nil
 	}
 }
@@ -40,10 +40,10 @@ type (
 
 func (r applyResponse) error() error { return r.Err }
 
-func makeApply(uc Usecase) endpoint.Endpoint {
+func makeApply(ctx context.Context, uc Usecase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(applyRequest)
-		err := uc.Apply(req.ApplicantEmailAddress)
+		err := uc.Apply(ctx, req.ApplicantEmailAddress)
 		return applyResponse{Err: err}, nil
 	}
 }
@@ -62,10 +62,10 @@ type (
 
 func (r addNextInterviewResponse) error() error { return r.Err }
 
-func makeAddNextInterview(uc Usecase) endpoint.Endpoint {
+func makeAddNextInterview(ctx context.Context, uc Usecase) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(addNextInterviewRequest)
-		err := uc.AddNextInterview(req.ScreeningID, req.InterviewDate)
+		err := uc.AddNextInterview(ctx, req.ScreeningID, req.InterviewDate)
 		return addNextInterviewResponse{Err: err}, nil
 	}
 }

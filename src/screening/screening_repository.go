@@ -1,7 +1,9 @@
 package screening
 
+import "context"
+
 type ScreeningRepository interface {
-	FindByID(screeningId ScreeningID) (*Screening, error)
-	Insert(screening *Screening) error
-	Update(screening *Screening) error
+	FindByID(ctx context.Context, screeningId ScreeningID) (*Screening, error)
+	Insert(ctx context.Context, screening *Screening) error
+	Update(ctx context.Context, screening *Screening) error
 }
