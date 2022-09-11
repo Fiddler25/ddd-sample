@@ -2,33 +2,34 @@ package screening
 
 import (
 	"context"
-	"ddd-sample/ent"
-	"ddd-sample/sdk/encode"
-	is "ddd-sample/src/infra/screening"
-	us "ddd-sample/src/usecase/screening"
 	"encoding/json"
+	"errors"
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"net/http"
 )
 
-func MakeHandler(ctx context.Context, client *ent.Client) http.Handler {
-	screeningRepo := is.NewScreeningRepository(ctx, client)
+var (
+	ErrInconsistentIDs = errors.New("inconsistent IDs")
+	ErrAlreadyExists   = errors.New("already exists")
+	ErrNotFound        = errors.New("not found")
+)
 
+func MakeHandler(ctx context.Context, uc Usecase) http.Handler {
 	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterview(us.NewScreeningUseCase(screeningRepo)),
+		makeStartFromPreInterview(ctx, uc),
 		decodeStartFromPreInterviewRequest,
-		encode.Response,
+		encodeResponse,
 	)
 	applyHandler := kithttp.NewServer(
-		makeApply(us.NewScreeningUseCase(screeningRepo)),
+		makeApply(ctx, uc),
 		decodeApplyRequest,
-		encode.Response,
+		encodeResponse,
 	)
 	addNextInterviewHandler := kithttp.NewServer(
-		makeAddNextInterview(us.NewScreeningUseCase(screeningRepo)),
+		makeAddNextInterview(ctx, uc),
 		decodeAddNextInterview,
-		encode.Response,
+		encodeResponse,
 	)
 
 	r := mux.NewRouter()
@@ -62,4 +63,32 @@ func decodeAddNextInterview(_ context.Context, r *http.Request) (interface{}, er
 		return nil, err
 	}
 	return req, nil
+}
+
+type errorer interface {
+	error() error
+}
+
+func encodeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	if e, ok := response.(errorer); ok && e.error() != nil {
+		encodeError(ctx, e.error(), w)
+		return nil
+	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	return json.NewEncoder(w).Encode(response)
+}
+
+func encodeError(_ context.Context, err error, w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	switch err {
+	case ErrNotFound:
+		w.WriteHeader(http.StatusNotFound)
+	case ErrInconsistentIDs, ErrAlreadyExists:
+		w.WriteHeader(http.StatusBadRequest)
+	default:
+		w.WriteHeader(http.StatusInternalServerError)
+	}
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"error": err.Error(),
+	})
 }
