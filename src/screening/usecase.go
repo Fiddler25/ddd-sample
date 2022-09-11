@@ -4,16 +4,23 @@ import (
 	"time"
 )
 
-type ScreeningUseCase struct {
+type Usecase interface {
+	StartFromPreInterview(applicantEmailAddress string) error
+	Apply(applicantEmailAddress string) error
+	AddNextInterview(screeningID string, interviewDate time.Time) error
+	StepToNext(screeningID string) error
+}
+
+type usecase struct {
 	screening ScreeningRepository
 }
 
-func NewScreeningUseCase(screening ScreeningRepository) ScreeningUseCase {
-	return ScreeningUseCase{screening: screening}
+func NewUsecase(screening ScreeningRepository) Usecase {
+	return &usecase{screening: screening}
 }
 
 // StartFromPreInterview 面談から新規候補者を登録する
-func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) error {
+func (uc usecase) StartFromPreInterview(applicantEmailAddress string) error {
 	e, err := NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
@@ -28,7 +35,7 @@ func (uc ScreeningUseCase) StartFromPreInterview(applicantEmailAddress string) e
 }
 
 // Apply 新規応募者を登録する
-func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
+func (uc usecase) Apply(applicantEmailAddress string) error {
 	e, err := NewEmailAddress(applicantEmailAddress)
 	if err != nil {
 		return err
@@ -43,7 +50,7 @@ func (uc ScreeningUseCase) Apply(applicantEmailAddress string) error {
 }
 
 // AddNextInterview 次の面接を設定する
-func (uc ScreeningUseCase) AddNextInterview(screeningID string, interviewDate time.Time) error {
+func (uc usecase) AddNextInterview(screeningID string, interviewDate time.Time) error {
 	s, err := uc.screening.FindByID(ScreeningID(screeningID))
 	if err != nil {
 		return err
@@ -57,7 +64,7 @@ func (uc ScreeningUseCase) AddNextInterview(screeningID string, interviewDate ti
 }
 
 // StepToNext 採用選考を次のステップに進める
-func (uc ScreeningUseCase) StepToNext(screeningID string) error {
+func (uc usecase) StepToNext(screeningID string) error {
 	s, err := uc.screening.FindByID(ScreeningID(screeningID))
 	if err != nil {
 		return err

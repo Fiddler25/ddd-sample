@@ -12,8 +12,12 @@ func main() {
 	ctx, client := ent.New()
 	defer client.Close()
 
+	var sr = screening.NewScreeningRepository(ctx, client)
+	var su screening.Usecase
+	su = screening.NewUsecase(sr)
+
 	mux := http.NewServeMux()
-	mux.Handle("/screening/v1/", screening.MakeHandler(ctx, client))
+	mux.Handle("/screening/v1/", screening.MakeHandler(su))
 
 	http.Handle("/", accessControl(mux))
 

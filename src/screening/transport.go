@@ -2,7 +2,6 @@ package screening
 
 import (
 	"context"
-	"ddd-sample/ent"
 	"ddd-sample/sdk/encode"
 	"encoding/json"
 	kithttp "github.com/go-kit/kit/transport/http"
@@ -10,21 +9,19 @@ import (
 	"net/http"
 )
 
-func MakeHandler(ctx context.Context, client *ent.Client) http.Handler {
-	screeningRepo := NewScreeningRepository(ctx, client)
-
+func MakeHandler(uc Usecase) http.Handler {
 	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterview(NewScreeningUseCase(screeningRepo)),
+		makeStartFromPreInterview(uc),
 		decodeStartFromPreInterviewRequest,
 		encode.Response,
 	)
 	applyHandler := kithttp.NewServer(
-		makeApply(NewScreeningUseCase(screeningRepo)),
+		makeApply(uc),
 		decodeApplyRequest,
 		encode.Response,
 	)
 	addNextInterviewHandler := kithttp.NewServer(
-		makeAddNextInterview(NewScreeningUseCase(screeningRepo)),
+		makeAddNextInterview(uc),
 		decodeAddNextInterview,
 		encode.Response,
 	)
