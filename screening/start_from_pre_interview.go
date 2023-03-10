@@ -6,14 +6,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type startFromPreInterviewOutput struct {
+type StartFromPreInterviewOutput struct {
 	ID                    ID
 	Status                Status
 	ApplicantEmailAddress string
 }
 
 // StartFromPreInterview 面談から新規候補者を登録する
-func (s *service) StartFromPreInterview(ctx context.Context, applicantEmailAddress string) (*startFromPreInterviewOutput, error) {
+func (s *service) StartFromPreInterview(ctx context.Context, applicantEmailAddress string) (*StartFromPreInterviewOutput, error) {
 	e := &Screening{
 		ID:                    ID(uuid.NewString()),
 		Status:                NotApplied, // 面談からの場合はステータス「未応募」で登録
@@ -27,7 +27,7 @@ func (s *service) StartFromPreInterview(ctx context.Context, applicantEmailAddre
 		return nil, err
 	}
 
-	return &startFromPreInterviewOutput{
+	return &StartFromPreInterviewOutput{
 		ID:                    res.ID,
 		Status:                res.Status,
 		ApplicantEmailAddress: res.ApplicantEmailAddress,

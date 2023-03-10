@@ -13,3 +13,13 @@ type Service interface {
 func NewService(repo Repository) Service {
 	return &service{repo: repo}
 }
+
+var _ Service = (*MockService)(nil)
+
+type MockService struct {
+	StartFromPreInterviewFunc func(ctx context.Context, applicantEmailAddress string) (*StartFromPreInterviewOutput, error)
+}
+
+func (m *MockService) StartFromPreInterview(ctx context.Context, applicantEmailAddress string) (*StartFromPreInterviewOutput, error) {
+	return m.StartFromPreInterviewFunc(ctx, applicantEmailAddress)
+}

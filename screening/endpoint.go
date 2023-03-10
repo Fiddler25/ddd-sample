@@ -7,26 +7,26 @@ import (
 )
 
 type (
-	startFromPreInterviewRequest struct {
+	StartFromPreInterviewRequest struct {
 		ApplicantEmailAddress string `json:"applicant_email_address"`
 	}
 
-	startFromPreInterviewResponse struct {
-		ID                    ID     `json:"id"`
-		Status                Status `json:"status"`
-		ApplicantEmailAddress string `json:"applicant_email_address"`
+	StartFromPreInterviewResponse struct {
+		ID                    ID     `json:"id,omitempty"`
+		Status                Status `json:"status,omitempty"`
+		ApplicantEmailAddress string `json:"applicant_email_address,omitempty"`
 		Err                   error  `json:"err,omitempty"`
 	}
 )
 
-func (r startFromPreInterviewResponse) error() error { return r.Err }
+func (r StartFromPreInterviewResponse) error() error { return r.Err }
 
 func makeStartFromPreInterviewEndpoint(ctx context.Context, s Service) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
-		req := request.(startFromPreInterviewRequest)
+		req := request.(StartFromPreInterviewRequest)
 		out, err := s.StartFromPreInterview(ctx, req.ApplicantEmailAddress)
 
-		return startFromPreInterviewResponse{
+		return &StartFromPreInterviewResponse{
 			ID:                    out.ID,
 			Status:                out.Status,
 			ApplicantEmailAddress: out.ApplicantEmailAddress,

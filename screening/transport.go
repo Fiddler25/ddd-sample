@@ -23,7 +23,7 @@ func MakeHandler(ctx context.Context, s Service) http.Handler {
 }
 
 func decodeStartFromPreInterviewRequest(_ context.Context, r *http.Request) (interface{}, error) {
-	var req startFromPreInterviewRequest
+	var req StartFromPreInterviewRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		return nil, err
 	}
