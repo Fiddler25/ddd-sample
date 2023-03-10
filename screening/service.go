@@ -7,7 +7,7 @@ type service struct {
 }
 
 type Service interface {
-	StartFromPreInterview(ctx context.Context, applicantEmailAddress string) (*startFromPreInterviewOutput, error)
+	StartFromPreInterview(ctx context.Context, applicantEmailAddress string) (*StartFromPreInterviewOutput, error)
 }
 
 func NewService(repo Repository) Service {
