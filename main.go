@@ -10,14 +10,14 @@ import (
 )
 
 func main() {
-	ctx, client := ent.New()
+	_, client := ent.New()
 	defer client.Close()
 
 	repo := screening.NewRepository(client)
 	svc := screening.NewService(repo)
 
 	mux := http.NewServeMux()
-	mux.Handle("/screening/v1/", screening.MakeHandler(ctx, svc))
+	mux.Handle("/screening/v1/", screening.MakeHandler(svc))
 
 	http.Handle("/", accessControl(mux))
 

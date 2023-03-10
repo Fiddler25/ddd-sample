@@ -3,17 +3,18 @@ package screening
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	kithttp "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 )
 
-func MakeHandler(ctx context.Context, s Service) http.Handler {
+func MakeHandler(s Service) http.Handler {
 	r := mux.NewRouter()
 
 	startFromPreInterviewHandler := kithttp.NewServer(
-		makeStartFromPreInterviewEndpoint(ctx, s),
+		MakeStartFromPreInterviewEndpoint(s),
 		decodeStartFromPreInterviewRequest,
 		encodeResponse,
 	)
@@ -57,7 +58,9 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 }
 
 func codeFrom(err error) int {
-	switch err {
+	switch {
+	case errors.Is(err, ErrValidation):
+		return http.StatusBadRequest
 	default:
 		return http.StatusInternalServerError
 	}

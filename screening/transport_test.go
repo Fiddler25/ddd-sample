@@ -86,7 +86,7 @@ func TestStartFromPreInterviewHandler(t *testing.T) {
 				}, tt.give.err
 			}
 
-			r := screening.MakeHandler(context.Background(), mock)
+			r := screening.MakeHandler(mock)
 			w := httptest.NewRecorder()
 			r.ServeHTTP(w, req)
 
