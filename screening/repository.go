@@ -10,7 +10,7 @@ type repository struct {
 }
 
 type Repository interface {
-	Insert(ctx context.Context, screening *Screening) error
+	Create(ctx context.Context, screening *Screening) (*Screening, error)
 }
 
 func NewRepository(c *ent.Client) Repository {

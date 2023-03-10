@@ -5,15 +5,22 @@ import (
 	"ddd-sample/ent/schema/property"
 )
 
-func (r *repository) Insert(ctx context.Context, s *Screening) error {
-	if _, err := r.client.Screening.
+func (r *repository) Create(ctx context.Context, s *Screening) (*Screening, error) {
+	e, err := r.client.Screening.
 		Create().
 		SetID(string(s.ID)).
 		SetScreeningStatus(property.ScreeningStatus(s.Status)).
 		SetNillableApplyDate(s.ApplyDate).
 		SetApplicantEmailAddress(s.ApplicantEmailAddress).
-		Save(ctx); err != nil {
-		return err
+		Save(ctx)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	return &Screening{
+		ID:                    ID(e.ID),
+		Status:                Status(e.ScreeningStatus),
+		ApplyDate:             e.ApplyDate,
+		ApplicantEmailAddress: e.ApplicantEmailAddress,
+	}, nil
 }
