@@ -13,7 +13,8 @@ func main() {
 	ctx, client := ent.New()
 	defer client.Close()
 
-	svc := screening.NewService()
+	repo := screening.NewRepository(client)
+	svc := screening.NewService(repo)
 
 	mux := http.NewServeMux()
 	mux.Handle("/screening/v1/", screening.MakeHandler(ctx, svc))
