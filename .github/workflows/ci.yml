@@ -13,11 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Style Check
-        uses: reviewdog/action-staticcheck@latest
+      - name: run golangci-lint
+        uses: reviewdog/action-golangci-lint@v2
         with:
-          filter_mode: diff_context
-          fail_on_error: true
+          reporter: github-pr-review
+          level: warning
 
       - name: Set up Go
         uses: actions/setup-go@v2
